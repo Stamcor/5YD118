@@ -1,12 +1,14 @@
 // Requirements: requirements/platform/spec.md
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { ErrorResponseSchema } from '@pilates/contracts';
 import Fastify from 'fastify';
 import { afterEach, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { ConfigError, loadConfig } from '../src/core/config.js';
 import { AppError, registerErrorHandling } from '../src/core/errors.js';
-import { sortByDependencies, type AppModule } from '../src/core/module.js';
+import { discoverModules, sortByDependencies, type AppModule } from '../src/core/module.js';
 import { EventBus, ServiceRegistry } from '../src/core/registry.js';
 import { parse } from '../src/core/validation.js';
 import { TEST_ENV, buildTestApp, type TestApp } from './helpers.js';
@@ -127,10 +129,14 @@ describe('PLAT-007 — Module loader and domain event bus', () => {
   });
 
   it('[PLAT-007/AC1] discovers every module directory without a central list', async () => {
-    t = await buildTestApp();
-    // all module stubs register; the app boots with all of them
-    const res = await t.app.inject({ method: 'GET', url: '/api/health' });
-    expect(res.statusCode).toBe(200);
+    // Robust to sparse checkouts: compare with whatever module directories are present.
+    const dir = fileURLToPath(new URL('../src/modules', import.meta.url));
+    const present = readdirSync(dir).filter((d) => existsSync(join(dir, d, 'index.ts')));
+    const discovered = await discoverModules(dir);
+    expect(discovered.map((m) => m.name).sort()).toEqual(present.sort());
+
+    t = await buildTestApp({ modules: present });
+    expect((await t.app.inject({ method: 'GET', url: '/api/health' })).statusCode).toBe(200);
   });
 
   it('[PLAT-007/AC2] registers in dependency order and fails on a missing dependency', () => {

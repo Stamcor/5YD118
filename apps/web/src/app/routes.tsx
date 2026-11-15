@@ -6,9 +6,13 @@ import { Navigate } from 'react-router';
 import { Layout } from './Layout.js';
 import { RequireAuth } from './RequireAuth.js';
 
-const features = import.meta.glob<FeatureRoutes>('../features/*/routes.tsx', { eager: true });
+export const discoveredFeatures = import.meta.glob<FeatureRoutes>('../features/*/routes.tsx', {
+  eager: true,
+});
 
-export function buildRoutes(): RouteObject[] {
+export function buildRoutes(
+  features: Record<string, FeatureRoutes> = discoveredFeatures,
+): RouteObject[] {
   const { routes, nav } = collectFeatureRoutes(features);
   return [
     {
