@@ -1,6 +1,8 @@
 import { buildApp } from './app.js';
 import { ConfigError, loadConfig } from './core/config.js';
 import { createDb } from './core/db.js';
+import { loggerOptions } from './core/logging.js';
+import { migrateOnStart } from './core/migrate.js';
 
 async function main() {
   let config;
@@ -13,8 +15,11 @@ async function main() {
     }
     throw err;
   }
-  const { db, close } = createDb(config.DATABASE_URL);
-  const { app } = await buildApp({ config, db, logger: { level: 'info' } });
+  const handle = createDb(config.DATABASE_URL);
+  const migration = await migrateOnStart(config, handle);
+  const { app } = await buildApp({ config, db: handle.db, logger: loggerOptions(config) });
+  app.log.info({ migration }, 'database ready');
+  const close = handle.close;
 
   const shutdown = async () => {
     await app.close();

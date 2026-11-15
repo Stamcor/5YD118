@@ -28,6 +28,7 @@ const ConfigSchema = z
       .default(30),
     BOOKING_CUTOFF_MINUTES: z.coerce.number().int().min(0).default(60),
     CANCELLATION_DEADLINE_HOURS: z.coerce.number().int().min(0).default(24),
+    DB_MIGRATE_ON_START: z.stringbool().default(true),
     STRIPE_SECRET_KEY: z.string().regex(/^(sk|rk)_(test|live)_/, 'must be a Stripe secret key'),
     STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_'),
   })

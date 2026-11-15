@@ -6,7 +6,9 @@ import { systemClock, type Clock } from './core/clock.js';
 import type { Config } from './core/config.js';
 import type { Db } from './core/db.js';
 import { registerErrorHandling } from './core/errors.js';
-import { registerHealth } from './core/health.js';
+import { registerHealth, registerPublicConfig } from './core/health.js';
+import { genReqId } from './core/logging.js';
+import { registerSecurity } from './core/security.js';
 import { discoverModules, sortByDependencies, type ModuleContext } from './core/module.js';
 import { EventBus, ServiceRegistry, type ServiceMap } from './core/registry.js';
 import './core/request-user.js';
@@ -29,7 +31,16 @@ const MODULES_DIR = fileURLToPath(new URL('./modules', import.meta.url));
 export async function buildApp(
   opts: BuildAppOptions,
 ): Promise<{ app: FastifyInstance; ctx: ModuleContext }> {
-  const app = Fastify({ logger: opts.logger ?? false });
+  const app = Fastify({
+    logger: opts.logger ?? false,
+    genReqId,
+    requestIdHeader: false,
+    // Behind nginx (compose) the client address comes from X-Forwarded-For.
+    trustProxy: true,
+  });
+  app.addHook('onSend', async (request, reply) => {
+    reply.header('x-request-id', request.id);
+  });
 
   const ctx: ModuleContext = {
     config: opts.config,
@@ -40,7 +51,9 @@ export async function buildApp(
   };
 
   registerErrorHandling(app);
+  await registerSecurity(app, opts.config);
   registerHealth(app);
+  registerPublicConfig(app, opts.config);
 
   const modules = sortByDependencies(
     await discoverModules(MODULES_DIR, opts.modules),

@@ -58,6 +58,8 @@ jobs:
       - run: pnpm test
       - run: pnpm build
       - run: pnpm req:check
+      # PLAT-006/AC3: committed migrations must match modules/*/schema.ts
+      - run: pnpm db:drift
 
   containers:
     name: Containers (podman-compose up)

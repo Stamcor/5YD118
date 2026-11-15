@@ -17,6 +17,7 @@
     "test:e2e": "pnpm --filter @pilates/e2e test",
     "req:trace": "node scripts/req-trace.mjs",
     "req:check": "node scripts/req-trace.mjs --strict",
+    "db:drift": "pnpm --filter @pilates/api db:generate && git diff --exit-code -- apps/api/drizzle && test -z \"$(git status --porcelain -- apps/api/drizzle)\"",
     "agent:workspace": "node scripts/agent-workspace.mjs",
     "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm req:check"
   },

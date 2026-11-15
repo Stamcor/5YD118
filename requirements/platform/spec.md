@@ -64,7 +64,7 @@ handle them in one place.
 ### PLAT-004 — Structured, privacy-safe logging
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api
 
 **Acceptance criteria**
@@ -77,7 +77,7 @@ handle them in one place.
 ### PLAT-005 — Browser security: CORS, CSRF and headers
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api
 
 **Acceptance criteria**
@@ -93,15 +93,19 @@ strict-origin-when-cross-origin` and a restrictive `Content-Security-Policy` for
 ### PLAT-006 — Versioned database migrations
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api
 
 **Acceptance criteria**
 
 1. Each module owns its tables in `apps/api/src/modules/<module>/schema.ts`. Migrations
    are generated with drizzle-kit into `apps/api/drizzle/` and committed.
-2. `buildTestApp()` applies all migrations to a fresh PGlite database. CI fails if
-   `schema.ts` and the committed migrations differ.
+2. `buildTestApp()` applies all migrations to a fresh PGlite database.
+3. `pnpm db:drift` regenerates the migrations and fails if `schema.ts` and the committed
+   migrations differ. CI runs it.
+4. The API applies pending migrations at startup, before it listens
+   (`DB_MIGRATE_ON_START`, default `true`). `podman-compose up` therefore gives a ready
+   database. With no migrations yet, start-up succeeds and does nothing.
 
 ### PLAT-007 — Module loader and domain event bus
 
@@ -132,7 +136,7 @@ present.
 ### PLAT-012 — Integration tests against real Postgres
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api
 
 **Acceptance criteria**
@@ -172,7 +176,7 @@ so that I can run it locally or on a single host without installing Node or Post
 ### PLAT-008 — Public client configuration
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api, contracts
 
 **Acceptance criteria**
