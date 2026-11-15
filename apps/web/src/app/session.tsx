@@ -11,6 +11,8 @@ export type Session =
 interface SessionValue {
   session: Session;
   refresh(): Promise<void>;
+  /** Set after login/register (user) or logout (null) without another request. */
+  setUser(user: User | null): void;
 }
 
 const SessionContext = createContext<SessionValue | null>(null);
@@ -34,7 +36,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('auth:unauthenticated', onUnauth);
   }, [refresh]);
 
-  return <SessionContext.Provider value={{ session, refresh }}>{children}</SessionContext.Provider>;
+  const setUser = useCallback((user: User | null) => {
+    setSession(user ? { status: 'authenticated', user } : { status: 'anonymous', user: null });
+  }, []);
+
+  return (
+    <SessionContext.Provider value={{ session, refresh, setUser }}>
+      {children}
+    </SessionContext.Provider>
+  );
 }
 
 export function useSession(): SessionValue {

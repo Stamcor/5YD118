@@ -1,10 +1,9 @@
 // Feature `auth` of the admin portal. Requirements: requirements/auth/spec.md (AUTH-009)
-// Pages are placeholders. Implement them test-first (see __tests__/).
 import type { AppRoute } from '@pilates/web-kit';
+import { AdminLoginPage } from './AdminLoginPage.js';
+import { LogoutPage } from './LogoutPage.js';
 
-// TODO(AUTH-009)
-function AdminLoginPage() {
-  return <h1>Staff login</h1>;
-}
-
-export const routes: AppRoute[] = [{ path: '/login', element: <AdminLoginPage /> }];
+export const routes: AppRoute[] = [
+  { path: '/login', element: <AdminLoginPage /> },
+  { path: '/logout', element: <LogoutPage /> },
+];

@@ -5,7 +5,9 @@
   "type": "module",
   "description": "Shared frontend shell for apps/web and apps/admin: API client, route types, guards, error boundary.",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./testing": "./src/testing.ts",
+    "./base.css": "./src/base.css"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

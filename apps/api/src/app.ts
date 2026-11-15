@@ -1,6 +1,7 @@
 // Composition root. Modules are discovered, not listed (PLAT-007), so a sparse checkout
 // with only some modules still builds and runs.
 import { fileURLToPath } from 'node:url';
+import cookie from '@fastify/cookie';
 import Fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify';
 import { systemClock, type Clock } from './core/clock.js';
 import type { Config } from './core/config.js';
@@ -52,6 +53,8 @@ export async function buildApp(
 
   registerErrorHandling(app);
   await registerSecurity(app, opts.config);
+  // Cookies are cross-cutting: auth's guards read them in every module's routes.
+  await app.register(cookie);
   registerHealth(app);
   registerPublicConfig(app, opts.config);
 

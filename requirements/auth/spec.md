@@ -5,7 +5,7 @@ Accounts, sessions and roles for members and admins.
 ### AUTH-001 — Member registration
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api, web, e2e
 
 **Story:** As a visitor I want to create an account so that I can book appointments.
@@ -27,7 +27,7 @@ Accounts, sessions and roles for members and admins.
 ### AUTH-002 — Login
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api, web, e2e
 
 **Acceptance criteria**
@@ -43,7 +43,7 @@ Accounts, sessions and roles for members and admins.
 ### AUTH-003 — Logout
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api, web
 
 **Acceptance criteria**
@@ -54,7 +54,7 @@ Accounts, sessions and roles for members and admins.
 ### AUTH-004 — Current user
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api
 
 **Acceptance criteria**
@@ -65,7 +65,7 @@ Accounts, sessions and roles for members and admins.
 ### AUTH-005 — Role-based access control
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api
 
 **Acceptance criteria**
@@ -80,7 +80,7 @@ Accounts, sessions and roles for members and admins.
 ### AUTH-006 — Admin provisioning
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api
 
 **Acceptance criteria**
@@ -93,7 +93,7 @@ Accounts, sessions and roles for members and admins.
 ### AUTH-007 — Session lifetime
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api
 
 **Acceptance criteria**
@@ -106,7 +106,7 @@ Accounts, sessions and roles for members and admins.
 ### AUTH-008 — Login rate limiting
 
 - **Priority:** Should
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** api
 
 **Acceptance criteria**
@@ -119,7 +119,7 @@ Accounts, sessions and roles for members and admins.
 ### AUTH-009 — Admin portal login
 
 - **Priority:** Must
-- **Status:** Approved
+- **Status:** Implemented
 - **Layers:** admin, e2e
 
 **Acceptance criteria**
