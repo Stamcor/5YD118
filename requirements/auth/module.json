@@ -1,0 +1,15 @@
+{
+  "$schema": "../_templates/module.schema.json",
+  "id": "auth",
+  "prefix": "AUTH",
+  "title": "Authentication & accounts",
+  "summary": "Member registration, login/logout, sessions, roles and admin provisioning.",
+  "dependsOn": ["platform"],
+  "paths": {
+    "api": ["apps/api/src/modules/auth"],
+    "web": ["apps/web/src/features/auth"],
+    "admin": ["apps/admin/src/features/auth"],
+    "contracts": ["packages/contracts/src/auth.ts"],
+    "e2e": ["e2e/tests/auth"]
+  }
+}

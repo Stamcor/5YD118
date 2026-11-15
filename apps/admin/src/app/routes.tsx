@@ -1,0 +1,29 @@
+// PLAT-009 — routes are discovered from src/features/*/routes.tsx. Adding a feature needs
+// no edit here, so features can be developed (and sparse-checked-out) independently.
+import { applyGuard, collectFeatureRoutes, type FeatureRoutes } from '@pilates/web-kit';
+import type { RouteObject } from 'react-router';
+import { Navigate } from 'react-router';
+import { Layout } from './Layout.js';
+import { RequireAuth } from './RequireAuth.js';
+
+export const discoveredFeatures = import.meta.glob<FeatureRoutes>('../features/*/routes.tsx', {
+  eager: true,
+});
+
+export function buildRoutes(
+  features: Record<string, FeatureRoutes> = discoveredFeatures,
+): RouteObject[] {
+  const { routes, nav } = collectFeatureRoutes(features);
+  return [
+    {
+      element: <Layout nav={nav} />,
+      children: [
+        ...applyGuard(routes, (_route, element) => (
+          <RequireAuth role="admin">{element}</RequireAuth>
+        )),
+        { path: '/', element: <Navigate to="/appointments" replace /> },
+        { path: '*', element: <p>Page not found.</p> },
+      ],
+    },
+  ];
+}

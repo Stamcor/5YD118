@@ -1,0 +1,15 @@
+{
+  "$schema": "../_templates/module.schema.json",
+  "id": "platform",
+  "prefix": "PLAT",
+  "title": "Platform",
+  "summary": "App shells, configuration, error handling, logging, security, event bus and migrations.",
+  "dependsOn": [],
+  "paths": {
+    "api": ["apps/api/src/core", "apps/api/test"],
+    "web": ["apps/web/src/app", "apps/web/src/lib"],
+    "admin": ["apps/admin/src/app", "apps/admin/src/lib"],
+    "contracts": ["packages/contracts/src/platform.ts"],
+    "e2e": ["e2e/tests/platform"]
+  }
+}

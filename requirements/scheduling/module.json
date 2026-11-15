@@ -1,0 +1,15 @@
+{
+  "$schema": "../_templates/module.schema.json",
+  "id": "scheduling",
+  "prefix": "SCHED",
+  "title": "Scheduling",
+  "summary": "Appointments (dated occurrences of courses): admins add and manage dates, members see what is bookable.",
+  "dependsOn": ["platform", "auth", "courses"],
+  "paths": {
+    "api": ["apps/api/src/modules/scheduling"],
+    "web": ["apps/web/src/features/scheduling"],
+    "admin": ["apps/admin/src/features/scheduling"],
+    "contracts": ["packages/contracts/src/scheduling.ts"],
+    "e2e": ["e2e/tests/scheduling"]
+  }
+}

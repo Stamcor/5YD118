@@ -1,0 +1,15 @@
+{
+  "$schema": "../_templates/module.schema.json",
+  "id": "example",
+  "prefix": "EX",
+  "title": "Example module",
+  "summary": "One sentence: what this module owns.",
+  "dependsOn": ["platform"],
+  "paths": {
+    "api": ["apps/api/src/modules/example"],
+    "web": ["apps/web/src/features/example"],
+    "admin": [],
+    "contracts": ["packages/contracts/src/example.ts"],
+    "e2e": ["e2e/tests/example"]
+  }
+}

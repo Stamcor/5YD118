@@ -1,0 +1,15 @@
+{
+  "$schema": "../_templates/module.schema.json",
+  "id": "payments",
+  "prefix": "PAY",
+  "title": "Payments (Stripe)",
+  "summary": "Stripe Checkout sessions, webhooks, idempotent event handling and refunds. Knows nothing about seats.",
+  "dependsOn": ["platform"],
+  "paths": {
+    "api": ["apps/api/src/modules/payments"],
+    "web": [],
+    "admin": [],
+    "contracts": ["packages/contracts/src/payments.ts"],
+    "e2e": ["e2e/tests/payments"]
+  }
+}
