@@ -59,6 +59,15 @@ jobs:
       - run: pnpm build
       - run: pnpm req:check
 
+  containers:
+    name: Containers (podman-compose up)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install podman-compose==1.5.0
+      # PLAT-013: the whole stack must start with podman-compose up.
+      - run: scripts/compose-smoke.sh
+
   e2e:
     name: End-to-end
     # PLAT-011/AC2: enable with repository variable E2E_ENABLED=true once journeys exist.

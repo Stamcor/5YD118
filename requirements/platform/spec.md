@@ -142,6 +142,33 @@ present.
 2. Tests that need real concurrency (for example BOOK-002) use `describe.runIf(hasPostgres)`.
    CI provides a Postgres service, so they always run there.
 
+### PLAT-013 — Whole stack starts with `podman-compose up`
+
+- **Priority:** Must
+- **Status:** Implemented
+- **Layers:** api
+
+**Story:** As a developer or operator I want to start the whole system with one command
+so that I can run it locally or on a single host without installing Node or Postgres.
+
+**Acceptance criteria**
+
+1. **Given** a checkout with no `.env`, **when** `podman-compose up -d` is run in the
+   repository root, **then** the services `postgres`, `api`, `web` and `admin` start.
+   `docker compose up -d` gives the same result.
+2. The member app is served on <http://localhost:8080> and the admin portal on
+   <http://localhost:8081>. Each proxies `/api` to the API on the same origin, so cookies
+   and the CSRF origin check work without CORS.
+3. Images are rootless-friendly. Image names are fully qualified (`docker.io/…`), the
+   API runs as a non-root user, and the API image contains only production
+   dependencies.
+4. Every setting has a working development default and can be overridden from `.env`
+   (Stripe keys, secrets, ports).
+5. `podman-compose --profile stripe up` additionally starts the Stripe CLI, which
+   forwards webhooks to `api:3000/api/payments/webhook`.
+6. `scripts/compose-smoke.sh` brings the stack up, checks `GET /api/health` through both
+   frontends, and tears it down. CI runs it on every pull request.
+
 ### PLAT-008 — Public client configuration
 
 - **Priority:** Must

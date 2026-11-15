@@ -116,6 +116,7 @@ function patternsFor(id) {
     '/.github/',
     '/scripts/',
     '/docs/',
+    '/infra/',
     '# requirements: shared context, own module, dependency interfaces only',
     '/requirements/README.md',
     '/requirements/_shared/',

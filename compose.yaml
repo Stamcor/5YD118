@@ -1,0 +1,93 @@
+# Whole stack (PLAT-013). Works with podman and docker:
+#   podman-compose up -d          # or: docker compose up -d
+#   podman-compose --profile stripe up -d   # also forward Stripe webhooks (needs Stripe test keys in .env)
+#
+# Member app http://localhost:8080 · Admin portal http://localhost:8081 · API http://localhost:3000
+# Every ${VAR:-default} can be overridden in .env (see .env.example).
+name: pilates
+
+services:
+  postgres:
+    image: docker.io/library/postgres:17-alpine
+    environment:
+      POSTGRES_USER: pilates
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pilates}
+      POSTGRES_DB: pilates
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U pilates']
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    image: localhost/pilates/api:latest
+    build:
+      context: .
+      dockerfile: infra/containers/api.Containerfile
+    environment:
+      # "development" keeps cookies non-Secure on http://localhost and allows Stripe test keys.
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3000
+      DATABASE_URL: postgres://pilates:${POSTGRES_PASSWORD:-pilates}@postgres:5432/pilates
+      SESSION_SECRET: ${SESSION_SECRET:-dev-only-session-secret-change-me-0123456789}
+      # Own names: WEB_ORIGIN/ADMIN_ORIGIN in .env point at the Vite dev servers (pnpm dev).
+      WEB_ORIGIN: ${PUBLIC_WEB_ORIGIN:-http://localhost:8080}
+      ADMIN_ORIGIN: ${PUBLIC_ADMIN_ORIGIN:-http://localhost:8081}
+      STUDIO_TIMEZONE: ${STUDIO_TIMEZONE:-Europe/Berlin}
+      STUDIO_CURRENCY: ${STUDIO_CURRENCY:-eur}
+      BOOKING_HOLD_MINUTES: ${BOOKING_HOLD_MINUTES:-30}
+      BOOKING_CUTOFF_MINUTES: ${BOOKING_CUTOFF_MINUTES:-60}
+      CANCELLATION_DEADLINE_HOURS: ${CANCELLATION_DEADLINE_HOURS:-24}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_replace_me}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_replace_me}
+    ports:
+      - '${API_PORT:-3000}:3000'
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  web:
+    image: localhost/pilates/web:latest
+    build:
+      context: .
+      dockerfile: infra/containers/frontend.Containerfile
+      args:
+        APP: web
+    environment:
+      API_UPSTREAM: http://api:3000
+    ports:
+      - '${WEB_PORT:-8080}:80'
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  admin:
+    image: localhost/pilates/admin:latest
+    build:
+      context: .
+      dockerfile: infra/containers/frontend.Containerfile
+      args:
+        APP: admin
+    environment:
+      API_UPSTREAM: http://api:3000
+    ports:
+      - '${ADMIN_PORT:-8081}:80'
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  stripe:
+    image: docker.io/stripe/stripe-cli:v1.55.11
+    profiles: ['stripe']
+    command: listen --forward-to api:3000/api/payments/webhook
+    environment:
+      STRIPE_API_KEY: ${STRIPE_SECRET_KEY:-sk_test_replace_me}
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

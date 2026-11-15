@@ -73,12 +73,13 @@ docs/                    architecture, ADRs, workflows
 
 ## Commands
 
-| Command                                      | What                                             |
-| -------------------------------------------- | ------------------------------------------------ |
-| `pnpm install`                               | Install the workspace                            |
-| `pnpm dev`                                   | api :3000, web :5173, admin :5174                |
-| `pnpm test`                                  | Unit and integration tests (all packages)        |
-| `pnpm --filter @pilates/api test -- booking` | Only the tests matching "booking"                |
-| `pnpm req:trace`                             | Requirement ↔ test matrix                        |
-| `pnpm verify`                                | Everything CI runs, except e2e                   |
-| `pnpm test:e2e`                              | Playwright (needs Postgres and Stripe test keys) |
+| Command                                      | What                                              |
+| -------------------------------------------- | ------------------------------------------------- |
+| `pnpm install`                               | Install the workspace                             |
+| `podman-compose up -d`                       | Whole stack in containers: web :8080, admin :8081 |
+| `pnpm dev`                                   | api :3000, web :5173, admin :5174                 |
+| `pnpm test`                                  | Unit and integration tests (all packages)         |
+| `pnpm --filter @pilates/api test -- booking` | Only the tests matching "booking"                 |
+| `pnpm req:trace`                             | Requirement ↔ test matrix                         |
+| `pnpm verify`                                | Everything CI runs, except e2e                    |
+| `pnpm test:e2e`                              | Playwright (needs Postgres and Stripe test keys)  |

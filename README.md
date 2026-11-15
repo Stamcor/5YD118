@@ -13,15 +13,32 @@ with Stripe**. Staff manage courses and dates in a separate **admin portal**.
 
 ## Quick start
 
+### Run everything in containers (podman or docker)
+
+```bash
+podman-compose up -d          # or: docker compose up -d
+```
+
+| URL                   | What                         |
+| --------------------- | ---------------------------- |
+| http://localhost:8080 | Member app                   |
+| http://localhost:8081 | Admin portal                 |
+| http://localhost:3000 | API (also proxied as `/api`) |
+
+No `.env` is needed: every setting has a development default. Put real Stripe test keys
+in `.env` and run `podman-compose --profile stripe up -d` to also forward Stripe
+webhooks. Stop with `podman-compose down` (add `-v` to delete the database).
+
+### Develop with hot reload
+
 ```bash
 pnpm install
 cp .env.example .env
-docker compose up -d postgres
-pnpm dev
+podman-compose up -d postgres   # only the database
+pnpm dev                        # api :3000 · web :5173 · admin :5174
 ```
 
-Open http://localhost:5173 (members) and http://localhost:5174 (admin). The Stripe
-setup is in [docs/development.md](docs/development.md).
+The Stripe setup is in [docs/development.md](docs/development.md).
 
 ## Layout
 
@@ -34,6 +51,7 @@ setup is in [docs/development.md](docs/development.md).
 | `packages/contracts` | zod schemas of the HTTP API (shared by all apps)                                   |
 | `packages/web-kit`   | Shared frontend shell                                                              |
 | `e2e`                | Playwright journeys                                                                |
+| `infra`              | Containerfiles and nginx config used by `compose.yaml`                             |
 | `scripts`            | `req-trace.mjs` (traceability), `agent-workspace.mjs` (sparse checkout per module) |
 | `docs`               | Architecture, ADRs, development and agent workflows                                |
 
