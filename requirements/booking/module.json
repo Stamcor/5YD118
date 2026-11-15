@@ -1,0 +1,15 @@
+{
+  "$schema": "../_templates/module.schema.json",
+  "id": "booking",
+  "prefix": "BOOK",
+  "title": "Booking",
+  "summary": "Seat holds, bookings, capacity, cancellations and the member book-and-pay flow.",
+  "dependsOn": ["platform", "auth", "scheduling", "payments"],
+  "paths": {
+    "api": ["apps/api/src/modules/booking"],
+    "web": ["apps/web/src/features/booking"],
+    "admin": ["apps/admin/src/features/booking"],
+    "contracts": ["packages/contracts/src/booking.ts"],
+    "e2e": ["e2e/tests/booking"]
+  }
+}

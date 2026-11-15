@@ -1,0 +1,15 @@
+{
+  "$schema": "../_templates/module.schema.json",
+  "id": "courses",
+  "prefix": "CRS",
+  "title": "Course catalogue",
+  "summary": "What the studio offers: admins manage courses, members browse them.",
+  "dependsOn": ["platform", "auth"],
+  "paths": {
+    "api": ["apps/api/src/modules/courses"],
+    "web": ["apps/web/src/features/courses"],
+    "admin": ["apps/admin/src/features/courses"],
+    "contracts": ["packages/contracts/src/courses.ts"],
+    "e2e": ["e2e/tests/courses"]
+  }
+}

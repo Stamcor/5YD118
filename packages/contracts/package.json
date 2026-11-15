@@ -1,0 +1,25 @@
+{
+  "name": "@pilates/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "HTTP contract (zod schemas + types) shared by api, web and admin.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  }
+}
