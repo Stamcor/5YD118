@@ -37,7 +37,13 @@ scripts/compose-smoke.sh            # build, start, check, tear down (what CI ru
 - Stripe webhooks: put test keys in `.env`, then run `podman-compose --profile stripe up -d`.
   `podman-compose logs stripe` prints the `whsec_...` secret. Set it as
   `STRIPE_WEBHOOK_SECRET` and run `podman-compose up -d api` to apply it.
-- Database migrations are not run yet. That arrives with PLAT-006.
+- The API applies database migrations when it starts (PLAT-006).
+- Create the first admin inside the running stack. The password is prompted for, or
+  read from stdin:
+
+  ```bash
+  podman-compose exec api node dist/modules/auth/cli/create-admin.js --email admin@studio.test --name "Studio Admin"
+  ```
 
 Payments in development (in a second terminal):
 
@@ -87,10 +93,30 @@ the database and the error format together, without the network.
 
 ```bash
 # after changing apps/api/src/modules/<m>/schema.ts
-pnpm --filter @pilates/api db:generate
+pnpm --filter @pilates/api db:generate   # writes apps/api/drizzle/NNNN_*.sql
+pnpm db:drift                            # CI: fails if schema.ts and migrations disagree
 ```
 
-Commit the generated files in `apps/api/drizzle/`.
+- Commit the generated files in `apps/api/drizzle/`, and never edit them by hand. Prettier
+  ignores them.
+- Each module prefixes its tables with its name (`auth_users`, `booking_bookings`, …).
+- Migrations run on API start-up (`DB_MIGRATE_ON_START`, default `true`) and in every
+  `buildTestApp()`.
+- Two branches that both add a migration conflict in `meta/_journal.json`. Rebase,
+  delete your new migration, and run `db:generate` again.
+- Run `db:drift` in a **full** checkout only. In a sparse checkout, the other modules'
+  `schema.ts` files are missing, so drizzle-kit would see them as dropped.
+
+## Real Postgres in tests (PLAT-012)
+
+```bash
+podman run -d --name pg-test -e POSTGRES_USER=pilates -e POSTGRES_PASSWORD=pilates \
+  -e POSTGRES_DB=pilates_test -p 55432:5432 docker.io/library/postgres:17-alpine
+TEST_DATABASE_URL=postgres://pilates:pilates@localhost:55432/pilates_test pnpm test
+```
+
+Tests written with `it.runIf(hasPostgres)` / `buildTestApp({ db: 'postgres' })` run only
+when it is set. CI always sets it.
 
 ## Adding a module
 
